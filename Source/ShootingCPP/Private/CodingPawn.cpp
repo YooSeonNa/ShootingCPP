@@ -44,8 +44,11 @@ void ACodingPawn::BeginPlay()
 	else
 	{
 	}
-
-	switch( Number/*조건이긴 하지만 정확히는 정수형 값*/ )
+	
+	/* Number는 정수형 값
+	   char는 문자이지만 정수형으로도 표현이 가능하니 사용할 수 있다	   
+	   문자열은 안된다*/
+	switch( Number )
 	{
 		case 1:
 		case 2:
@@ -56,6 +59,14 @@ void ACodingPawn::BeginPlay()
 
 		default:
 			break;
+	}
+
+	char a = 'a';
+	switch(a)
+	{
+	case 'a':
+	case 'A':
+	break;
 	}
 
 	// 반복문
@@ -87,7 +98,7 @@ void ACodingPawn::BeginPlay()
 
 
 	TMap<FString , int32> map;
-
+	
 	map.Add( "Coin" , 10 );
 	if( false == map.Contains( "Coin" ) )
 	{
@@ -106,6 +117,9 @@ void ACodingPawn::BeginPlay()
 		UE_LOG( LogTemp , Warning , TEXT( "%s - %d" ) , *( pair.Key ) , pair.Value );
 	}
 	
+	UE_LOG(LogTemp, Warning, TEXT("Size of : %d"), sizeof(Number));
+
+
 }
 
 // Called every frame
@@ -120,5 +134,20 @@ void ACodingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+int32 ACodingPawn::MyAddCallable( int32 a , int32 b )
+{
+	return a + b;
+}
+
+int32 ACodingPawn::MyAddPure( int32 a , int32 b )
+{
+	return a + b;
+}
+
+int32 ACodingPawn::MyAddNativeEvent_Implementation( int32 a , int32 b )
+{
+	return a + b;
 }
 
