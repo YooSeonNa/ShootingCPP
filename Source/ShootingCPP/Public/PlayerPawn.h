@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+
 #include "PlayerPawn.generated.h"
 
 class UBoxComponent;
+class ABulletActor;
 
 UCLASS()
 class SHOOTINGCPP_API APlayerPawn : public APawn
@@ -38,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UArrowComponent* FirePositionComp;
+
 
 
 	// 오른쪽으로 이동하고 싶다.
@@ -45,6 +50,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed = 500.0f;
+
+
+	// 사용자의 입력에 따라 상하좌우로 이동하고 싶다
+	float h;
+	float v;
+
+	void OnAxisHorizontal( float value );
+	void OnAxisVertical( float value );
+
+	void OnActionFire();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABulletActor> BulletFactory;
 
 
 };
