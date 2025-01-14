@@ -7,8 +7,8 @@
 
 #include "PlayerPawn.generated.h"
 
-class UBoxComponent;
-class ABulletActor;
+//class UBoxComponent;
+//class ABulletActor;
 
 UCLASS()
 class SHOOTINGCPP_API APlayerPawn : public APawn
@@ -42,8 +42,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* FirePositionComp;
-
-
 
 	// 오른쪽으로 이동하고 싶다.
 	// P = P0 + v(방향 * Speed)t

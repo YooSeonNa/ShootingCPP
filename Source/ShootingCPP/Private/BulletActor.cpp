@@ -3,6 +3,7 @@
 
 #include "BulletActor.h"
 #include "Components/BoxComponent.h"
+#include "EnemyActor.h"
 
 // Sets default values
 ABulletActor::ABulletActor()
@@ -30,8 +31,11 @@ ABulletActor::ABulletActor()
 
 	BoxComp->SetRelativeScale3D( FVector( 0.75f, 0.25f, 1.0f ));
 
+	// 박스 컴포넌트의 콜리전 프리셋을 Bullet으로 설정한다.
+	BoxComp->SetCollisionProfileName( TEXT("Bullet") ); 
 
-
+	// 박스 컴포넌트의 충돌 오버랩 이벤트에 BulletOverlap 함수를 연결한다.
+	BoxComp->OnComponentBeginOverlap.AddDynamic( this, &ABulletActor::OnBulletOverlap );
 }
 
 // Called when the game starts or when spawned
@@ -53,5 +57,21 @@ void ABulletActor::Tick(float DeltaTime)
 	FVector velocity = GetActorForwardVector() * Speed;
 	float t = DeltaTime;
 	SetActorLocation( p0 + velocity * t );
+}
+
+void ABulletActor::OnBulletOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	// 충돌한 액터를 AEnemyActor 클래스로 변환해본다.
+	AEnemyActor* enemy = Cast<AEnemyActor>(OtherActor);
+
+	// 만일 캐스팅이 정상적으로 성공해서 포인터 enemy에 값이 있다면
+	if( enemy != nullptr )
+	{
+		// 충돌한 액터를 제거한다.
+		OtherActor->Destroy();
+	}
+	
+	// 자기 자신도 제거한다.
+	this->Destroy();
 }
 

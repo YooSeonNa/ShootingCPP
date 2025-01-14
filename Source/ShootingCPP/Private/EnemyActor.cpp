@@ -3,6 +3,7 @@
 
 #include "EnemyActor.h"
 #include "Components/BoxComponent.h"
+#include "PlayerPawn.h"
 
 // Sets default values
 AEnemyActor::AEnemyActor()
@@ -19,7 +20,11 @@ AEnemyActor::AEnemyActor()
 	MeshComp->SetupAttachment( RootComponent );
 
 
+	// Collsion Presets을 Enemy 프리셋으로 변경하고 싶다.
+	BoxComp->SetCollisionProfileName( TEXT("Enemy") );
 
+	// 박스 컴포넌트의 BeginOverlap 델리게이트에 OnEnemyOverlap 함수를 연결한다.
+	BoxComp->OnComponentBeginOverlap.AddDynamic( this, &AEnemyActor::OnEnemyOverlap );
 }
 
 // Called when the game starts or when spawned
@@ -67,5 +72,21 @@ void AEnemyActor::Tick(float DeltaTime)
 		// P = P0 + vt
 		SetActorLocation( GetActorLocation() + Direction * Speed * DeltaTime );
 	}
+}
+
+void AEnemyActor::OnEnemyOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
+{
+	// 충돌한 대상 액터를 APlayerPawn 클래스로 변환을 시도한다.
+	APlayerPawn* player = Cast<APlayerPawn>( OtherActor );
+
+	// 만일 캐스팅이 성공하면
+	if( player != nullptr )
+	{
+		// 부딪힌 대상을 제거한다.
+		OtherActor->Destroy();
+	}
+
+	// 자기 자신도 제거한다.
+	Destroy();
 }
 

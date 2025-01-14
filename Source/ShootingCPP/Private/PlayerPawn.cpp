@@ -30,6 +30,22 @@ APlayerPawn::APlayerPawn()
 	FirePositionComp->SetupAttachment( RootComponent );
 	FirePositionComp->SetRelativeLocationAndRotation( FVector( 0.0f, 0.0f, 100.0f ), FRotator( 90.0f, 0.0f, 0.0f ));
 
+	// 오버랩 이벤트를 켠다.
+	BoxComp->SetGenerateOverlapEvents(true);
+
+	// 충돌 응답을 Query And Physics로 설정한다.
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	// Object Type을 1번 채널(Player)로 설정한다.
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+
+	// 모든 채널을 충돌 응답 없음으로 설정한다.
+	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	// 에너미와는 충돌 이벤트 체크(Query)를 한다.
+	BoxComp->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Overlap);
+
+
 }
 
 // Called when the game starts or when spawned
