@@ -45,6 +45,9 @@ APlayerPawn::APlayerPawn()
 	// 에너미와는 충돌 이벤트 체크(Query)를 한다.
 	BoxComp->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Overlap);
 
+	// WorldStatic( DeadZone )과 충돌 이벤트 체크를 한다.
+	BoxComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
 
 }
 
@@ -80,7 +83,7 @@ void APlayerPawn::Tick(float DeltaTime)
 		FVector p0 = GetActorLocation();
 		FVector velocity = dir * Speed;
 
-		SetActorLocation( p0 + velocity * DeltaTime );
+		SetActorLocation( p0 + velocity * DeltaTime, true );
 		//SetActorLocation( GetActorLocation() + dir.GetSafeNormal() * Speed * DeltaTime );
 	}
 

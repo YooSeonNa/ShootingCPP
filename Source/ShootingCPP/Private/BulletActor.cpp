@@ -4,6 +4,7 @@
 #include "BulletActor.h"
 #include "Components/BoxComponent.h"
 #include "EnemyActor.h"
+#include "ShootingGameMode.h"
 
 // Sets default values
 ABulletActor::ABulletActor()
@@ -69,6 +70,19 @@ void ABulletActor::OnBulletOverlap( UPrimitiveComponent* OverlappedComponent , A
 	{
 		// 충돌한 액터를 제거한다.
 		OtherActor->Destroy();
+
+		// 현재 게임모드를 가져온다
+		AGameModeBase* currentMode = GetWorld()->GetAuthGameMode();		
+
+		// AShootingGameMode 클래스로 변환한다.
+		AShootingGameMode* currentGameMode = Cast<AShootingGameMode>(currentMode);
+
+		if( currentGameMode != nullptr )
+		{
+			// 게임 모드 베이스의 점수를 1점 추가한다.
+			currentGameMode->AddScore( 1 );
+		}
+
 	}
 	
 	// 자기 자신도 제거한다.

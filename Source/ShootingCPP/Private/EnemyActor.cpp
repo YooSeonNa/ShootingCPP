@@ -84,9 +84,9 @@ void AEnemyActor::OnEnemyOverlap( UPrimitiveComponent* OverlappedComponent , AAc
 	{
 		// 부딪힌 대상을 제거한다.
 		OtherActor->Destroy();
-	}
 
-	// 자기 자신도 제거한다.
-	Destroy();
+		// 자기 자신도 제거한다.
+		this->Destroy();
+	}
 }
 
