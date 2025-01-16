@@ -4,6 +4,7 @@
 #include "EnemyActor.h"
 #include "Components/BoxComponent.h"
 #include "PlayerPawn.h"
+#include "ShootingGameMode.h"
 
 // Sets default values
 AEnemyActor::AEnemyActor()
@@ -82,8 +83,23 @@ void AEnemyActor::OnEnemyOverlap( UPrimitiveComponent* OverlappedComponent , AAc
 	// 만일 캐스팅이 성공하면
 	if( player != nullptr )
 	{
-		// 부딪힌 대상을 제거한다.
-		OtherActor->Destroy();
+		// 플레이어의 체력을 1 감소한다.
+		player->SetDamage( 1 );
+
+		// 플레이어가 사망했다면
+		if( player->HP <= 0 )
+		{
+			// 부딪힌 대상을 제거한다.
+			OtherActor->Destroy();			
+
+			// 현재 게임모드를 가져온다.
+			AShootingGameMode* currentGameMode = Cast<AShootingGameMode>( GetWorld()->GetAuthGameMode() );
+			if( currentGameMode != nullptr )
+			{
+				// GameOver UI를 보여준다.
+				currentGameMode->ShowGameOver(true);
+			}
+		}
 
 		// 자기 자신도 제거한다.
 		this->Destroy();

@@ -62,5 +62,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletActor> BulletFactory;
 
+	UPROPERTY()
+	class AShootingGameMode* GM;
+
+	// 최대체력 / 현재체력
+	float HP;
+
+	UPROPERTY(EditAnywhere)
+	float MaxHP = 2;
+
+	// 데미지 처리
+	void SetDamage( int32 damage );	// 적이 호출을 할 예정
 
 };

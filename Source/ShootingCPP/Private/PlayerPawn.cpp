@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/ArrowComponent.h"
 #include "BulletActor.h"
+#include "ShootingGameMode.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -55,7 +56,14 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GM = Cast<AShootingGameMode>( GetWorld()->GetAuthGameMode() );
+
+	// 현재 체력을 최대 체력으로 설정한다.
+	HP = MaxHP;
 	
+	// HP Bar를 갱신해준다.
+	GM->SetHP( HP, MaxHP );
 }
 
 // Called every frame
@@ -121,5 +129,13 @@ void APlayerPawn::OnActionFire()
 	FTransform FirePos = FirePositionComp->GetComponentTransform();
 
 	GetWorld()->SpawnActor<ABulletActor>( BulletFactory, FirePos );
+}
+
+void APlayerPawn::SetDamage( int32 damage )
+{
+	HP -= damage;
+
+	// HP Bar 갱신
+	GM->SetHP( HP, MaxHP );
 }
 
