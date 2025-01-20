@@ -75,6 +75,17 @@ void APlayerPawn::BeginPlay()
 	
 	// HP Bar를 갱신해준다.
 	GM->SetHP( HP, MaxHP );
+
+	// Magazine pool에 총알 20개 추가하고 싶다.
+	for( int32 i = 0; i < MaxBulletCount; ++i )
+	{
+		FActorSpawnParameters params;
+		// 항상 스폰되게 한다.
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ABulletActor* bullet = GetWorld()->SpawnActor<ABulletActor>( BulletFactory, params );
+		bullet->SetActive( false );
+		Magazine.Add( bullet );
+	}
 }
 
 // Called every frame
@@ -106,6 +117,26 @@ void APlayerPawn::Tick(float DeltaTime)
 		//SetActorLocation( GetActorLocation() + dir.GetSafeNormal() * Speed * DeltaTime );
 	}
 
+	{
+		// 1. Tick에서 bAutoFire가 true일때
+		if( bAutoFire == true )
+		{
+			// 2. 시간이 흐르다가
+			CurrentTime += DeltaTime;
+
+			// 3. 누적시간이 발사시간을 지나면
+			if( CurrentTime >= FireTime )
+			{
+
+				// 4. 총알을 만들고 싶다.
+				MakeBullet();
+
+				// 5. 누적시간을 0으로 초기화 하고 싶다.
+				CurrentTime = 0.0f;
+			}
+		}
+	}
+
 
 }
 
@@ -118,7 +149,12 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis( TEXT("Horizontal"), this, &APlayerPawn::OnAxisHorizontal );
 	PlayerInputComponent->BindAxis( TEXT("Vertical"), this, &APlayerPawn::OnAxisVertical );
 
-	PlayerInputComponent->BindAction( TEXT("Fire"), IE_Pressed, this, &APlayerPawn::OnActionFire );
+	//PlayerInputComponent->BindAction( TEXT("Fire"), IE_Pressed, this, &APlayerPawn::OnActionFire );
+
+	PlayerInputComponent->BindAction( TEXT("AutoFire_1"), IE_Pressed, this, &APlayerPawn::OnActionAutoFire_1 );
+
+	PlayerInputComponent->BindAction( TEXT( "Fire" ) , IE_Pressed , this , &APlayerPawn::OnActionAutoFire_2 );
+	PlayerInputComponent->BindAction( TEXT( "Fire" ) , IE_Released , this , &APlayerPawn::OnActionAutoFire_2 );
 
 }
 
@@ -137,11 +173,31 @@ void APlayerPawn::OnAxisVertical( float value )
 void APlayerPawn::OnActionFire()
 {
 	// 클릭시 총알을 생성시켜 주고 싶다.
-	FTransform FirePos = FirePositionComp->GetComponentTransform();
+	//FTransform FirePos = FirePositionComp->GetComponentTransform();
+	//
+	//GetWorld()->SpawnActor<ABulletActor>( BulletFactory, FirePos );
+	//
+	//UGameplayStatics::PlaySound2D( GetWorld(), FireSound );
 
-	GetWorld()->SpawnActor<ABulletActor>( BulletFactory, FirePos );
+	MakeBullet();
+}
 
-	UGameplayStatics::PlaySound2D( GetWorld(), FireSound );
+void APlayerPawn::OnActionAutoFire_1()
+{
+	bAutoFire = !bAutoFire;
+	CurrentTime = FireTime;
+}
+
+void APlayerPawn::OnActionAutoFire_2()
+{
+	// 마우스 왼쪽 버튼을 누르면 bAutoFire를 On/Off 전환하고 싶다.
+	bAutoFire = !bAutoFire;
+
+	// 만약 bAutoFire가 활성화 되면 총알을 한발 쏘고 싶다.
+	if( bAutoFire )
+	{		
+		CurrentTime = FireTime;
+	}
 }
 
 void APlayerPawn::SetDamage( int32 damage )
@@ -150,5 +206,37 @@ void APlayerPawn::SetDamage( int32 damage )
 
 	// HP Bar 갱신
 	GM->SetHP( HP, MaxHP );
+}
+
+void APlayerPawn::MakeBullet()
+{
+	bool FindResult = false;
+	FTransform t = FirePositionComp->GetComponentTransform();
+
+	// 탄창을 전부 검사해서 비활성화된 총알을 찾고 싶다.
+	for( int i = 0; i < Magazine.Num(); ++i )
+	{
+		// 찾았다면 그 총알을 활성화 하고 총구 위치에 배치하고 싶다.
+		if( Magazine[i]->MeshComp->GetVisibleFlag() == false )
+		{
+			FindResult = true;
+
+			// 활성화 시키고 총구 위치에 배치하고 싶다.
+			Magazine[i]->SetActive( true );
+			//Magazine[i]->SetActorTransform( t );	// 총알에 설정해준 Scale이 초기화 되니 아래 코드를 사용하자
+			Magazine[i]->SetActorLocationAndRotation( t.GetLocation(), t.GetRotation() );
+
+
+			// 소리를 재생하고 싶다.
+			UGameplayStatics::PlaySound2D( GetWorld() , FireSound );
+			// 반복을 그만하고 싶다.
+			break;
+		}
+	}
+
+	if( FindResult == false )
+	{
+		// 추가로 총알을 더 만든다.
+	}
 }
 

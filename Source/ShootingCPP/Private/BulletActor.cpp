@@ -90,6 +90,23 @@ void ABulletActor::OnBulletOverlap( UPrimitiveComponent* OverlappedComponent , A
 	UGameplayStatics::SpawnEmitterAtLocation( GetWorld(), ExplosionVFX, GetActorTransform() );
 	
 	// 자기 자신도 제거한다.
-	this->Destroy();
+	//this->Destroy();
+	// Magazin Pool로 돌려보낸다
+	SetActive( false );
+}
+
+void ABulletActor::SetActive( bool bValue )
+{
+	// 만약 bValue가 true라면 보이고, 충돌체도 활성화 시키고 싶다.
+	MeshComp->SetVisibility( bValue );
+	if( bValue )
+	{
+		BoxComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	}
+	// 그렇지 않다면 안보이고, 충돌체도 비활성화 시키고 싶다.
+	else
+	{		
+		BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	}
 }
 

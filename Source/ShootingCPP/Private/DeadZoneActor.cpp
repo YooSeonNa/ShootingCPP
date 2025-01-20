@@ -4,6 +4,7 @@
 #include "DeadZoneActor.h"
 #include "Components/BoxComponent.h"
 #include "PlayerPawn.h"
+#include "BulletActor.h"
 
 // Sets default values
 ADeadZoneActor::ADeadZoneActor()
@@ -46,26 +47,42 @@ void ADeadZoneActor::Tick(float DeltaTime)
 
 void ADeadZoneActor::NotifyActorBeginOverlap( AActor* OtherActor )
 {
-	// 만약에 상대가 플레이어가 아니라면
-	if( !( OtherActor->IsA<APlayerPawn>() ) )
+	// 부딪힌 상대가 총알이라면 비활성화 하고 싶다.
+	ABulletActor* bullet = Cast<ABulletActor>( OtherActor );
+	if( bullet )
 	{
-		// 부딪힌 상대를 파괴하고 싶다.
-		OtherActor->Destroy();
+		bullet->SetActive( false );
 	}
+	else
+	{
+		// 만약 상대가 플레이어가 아니라면
+		if( !( OtherActor->IsA<APlayerPawn>() ) )
+		{
+			// 부딪힌 상대를 파괴하고 싶다.
+			OtherActor->Destroy();
+		}
+	}
+
+	// 만약에 상대가 플레이어가 아니라면
+	//if( !( OtherActor->IsA<APlayerPawn>() ) )
+	//{
+	//	// 부딪힌 상대를 파괴하고 싶다.
+	//	OtherActor->Destroy();
+	//}
 }
 
 void ADeadZoneActor::OnDeadZoneOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	// 부딪힌 OtherActor가 에너미 이거나 총알이면  파괴하고 싶다.
 	{
-		APlayerPawn* player = Cast<APlayerPawn>( OtherActor );
-
-		// 플레이어가 아니면
-		if( player == nullptr )
-		{
-			// 부딪힌 상대를 파괴하고 싶다.
-			OtherActor->Destroy();
-		}
+		//APlayerPawn* player = Cast<APlayerPawn>( OtherActor );
+		//
+		//// 플레이어가 아니면
+		//if( player == nullptr )
+		//{
+		//	// 부딪힌 상대를 파괴하고 싶다.
+		//	OtherActor->Destroy();
+		//}
 	}
 
 	//AEnemyActor* enemy = Cast<AEnemyActor>( OtherActor );

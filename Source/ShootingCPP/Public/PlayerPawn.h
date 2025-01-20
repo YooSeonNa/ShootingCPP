@@ -58,6 +58,8 @@ public:
 	void OnAxisVertical( float value );
 
 	void OnActionFire();
+	void OnActionAutoFire_1();
+	void OnActionAutoFire_2();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletActor> BulletFactory;
@@ -76,5 +78,30 @@ public:
 
 	// 데미지 처리
 	void SetDamage( int32 damage );	// 적이 호출을 할 예정
+
+
+	// 총알을 오브젝트 풀 처리하고 싶다.
+	// [ 필요 요소 ]
+	// - 최초 생성할 총알 갯수( 몇개 만들 것인가? )
+	UPROPERTY(EditAnywhere)
+	int32 MaxBulletCount = 20;
+
+	// - 총알 목록
+	UPROPERTY()
+	TArray<class ABulletActor*> Magazine;
+
+	void MakeBullet();
+
+
+	// 자동 총쏘기 기능을 만들고 싶다.
+	// 자동발사를 기억하기 위한 변수 bAutoFire;
+	// Tick에서 시간이 흐르다가 발사 시간이 되면 총알을 만들고 싶다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	bool bAutoFire = false;
+
+	float CurrentTime = 0.0f;
+
+	UPROPERTY(EditAnywhere)
+	float FireTime = 0.2f;
 
 };
