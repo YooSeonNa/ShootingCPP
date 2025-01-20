@@ -59,4 +59,9 @@ private:
 
 	void PrintScore();
 	void PrintHighScore();
+
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase*	BGM;
+
 };

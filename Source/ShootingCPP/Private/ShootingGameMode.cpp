@@ -11,6 +11,8 @@ void AShootingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UGameplayStatics::PlaySound2D( GetWorld(), BGM );
+
 	// 저장되어 있는 데이터를 불러오자
 	LoadGameData();
 
@@ -65,6 +67,24 @@ void AShootingGameMode::SetHP( float Cur , float Max )
 void AShootingGameMode::ShowGameOver( bool bShow )
 {
 	if( mainUI == nullptr )	return;
+
+	// 게임을 bShow 값에 따라서 일시 정지 상태를 설정한다
+	UGameplayStatics::SetGamePaused( GetWorld() , bShow );
+
+	// 마우스 커서를 bShow 값에 따라서 보이거나 안보이게 한다.
+	auto* pc = GetWorld()->GetFirstPlayerController();	
+	pc->SetShowMouseCursor( bShow );
+
+	// bShow 값에 따라서 InputMode 설정을 바꿔 준다.
+	if( bShow == true )
+	{
+		pc->SetInputMode( FInputModeUIOnly() );
+	}
+	else
+	{
+		pc->SetInputMode( FInputModeGameOnly() );
+	}
+
 	mainUI->ShowGameOver( bShow );
 }
 

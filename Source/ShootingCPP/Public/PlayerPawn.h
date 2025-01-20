@@ -62,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletActor> BulletFactory;
 
+	UPROPERTY(EditAnywhere)
+	class USoundBase*	FireSound;
+
 	UPROPERTY()
 	class AShootingGameMode* GM;
 

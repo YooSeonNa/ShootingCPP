@@ -33,6 +33,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(EditAnywhere)
+	class USoundBase*	ExplosionSound;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem*	ExplosionVFX;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 RandomRate = 30;

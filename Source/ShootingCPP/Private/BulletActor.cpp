@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "EnemyActor.h"
 #include "ShootingGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABulletActor::ABulletActor()
@@ -84,6 +85,9 @@ void ABulletActor::OnBulletOverlap( UPrimitiveComponent* OverlappedComponent , A
 		}
 
 	}
+
+	UGameplayStatics::PlaySound2D( GetWorld(), ExplosionSound );
+	UGameplayStatics::SpawnEmitterAtLocation( GetWorld(), ExplosionVFX, GetActorTransform() );
 	
 	// 자기 자신도 제거한다.
 	this->Destroy();

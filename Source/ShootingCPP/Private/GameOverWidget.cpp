@@ -3,6 +3,7 @@
 
 #include "GameOverWidget.h"
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
 
 void UGameOverWidget::NativeConstruct()
 {
@@ -15,10 +16,12 @@ void UGameOverWidget::NativeConstruct()
 
 void UGameOverWidget::Restart()
 {
-
+	// 레벨을 다시 로드 한다.
+	FString mapName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
+	UGameplayStatics::OpenLevel( GetWorld(), FName( *mapName ) );
 }
 
 void UGameOverWidget::Quit()
 {
-
+	UKismetSystemLibrary::QuitGame( GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false );
 }

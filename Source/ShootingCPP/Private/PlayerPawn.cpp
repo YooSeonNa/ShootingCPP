@@ -6,6 +6,7 @@
 #include "Components/ArrowComponent.h"
 #include "BulletActor.h"
 #include "ShootingGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -58,6 +59,16 @@ void APlayerPawn::BeginPlay()
 	Super::BeginPlay();
 
 	GM = Cast<AShootingGameMode>( GetWorld()->GetAuthGameMode() );
+	// GameOverUI 숨기기, 마우스 커서 초기화, 게임 일시정지 해지, 인풋모드 게임으로 전환 등 초기화 설정
+	GM->ShowGameOver( false );
+
+	//// 게임을 일시 정지 상태로 만든다.
+	//UGameplayStatics::SetGamePaused( GetWorld() , false );
+	//
+	//// 마우스 커서를 보이게 한다.
+	//auto* pc = GetWorld()->GetFirstPlayerController();
+	//pc->SetShowMouseCursor( false );
+	//pc->SetInputMode( FInputModeGameOnly() );
 
 	// 현재 체력을 최대 체력으로 설정한다.
 	HP = MaxHP;
@@ -129,6 +140,8 @@ void APlayerPawn::OnActionFire()
 	FTransform FirePos = FirePositionComp->GetComponentTransform();
 
 	GetWorld()->SpawnActor<ABulletActor>( BulletFactory, FirePos );
+
+	UGameplayStatics::PlaySound2D( GetWorld(), FireSound );
 }
 
 void APlayerPawn::SetDamage( int32 damage )

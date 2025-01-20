@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "PlayerPawn.h"
 #include "ShootingGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemyActor::AEnemyActor()
@@ -96,6 +97,14 @@ void AEnemyActor::OnEnemyOverlap( UPrimitiveComponent* OverlappedComponent , AAc
 			AShootingGameMode* currentGameMode = Cast<AShootingGameMode>( GetWorld()->GetAuthGameMode() );
 			if( currentGameMode != nullptr )
 			{
+				//// 게임을 일시 정지 상태로 만든다.
+				//UGameplayStatics::SetGamePaused( GetWorld(), true );
+				//
+				//// 마우스 커서를 보이게 한다.
+				//auto* pc = GetWorld()->GetFirstPlayerController();
+				//pc->SetShowMouseCursor( true );
+				//pc->SetInputMode( FInputModeUIOnly() );
+
 				// GameOver UI를 보여준다.
 				currentGameMode->ShowGameOver(true);
 			}
@@ -103,6 +112,9 @@ void AEnemyActor::OnEnemyOverlap( UPrimitiveComponent* OverlappedComponent , AAc
 
 		// 자기 자신도 제거한다.
 		this->Destroy();
+
+		UGameplayStatics::PlaySound2D( GetWorld(), ExplosionSound );
+		UGameplayStatics::SpawnEmitterAtLocation( GetWorld(), ExplosionVFX, GetActorTransform() );
 	}
 }
 
